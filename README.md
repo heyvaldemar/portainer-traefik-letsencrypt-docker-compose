@@ -1,103 +1,78 @@
-# Portainer with Let's Encrypt Using Docker Compose
+# Portainer + Traefik + Let's Encrypt — Docker Compose
 
-[![Deployment Verification](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions/workflows/00-deployment-verification.yml/badge.svg)](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions)
+[![Deployment Verification](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The badge displayed on my repository indicates the status of the deployment verification workflow as executed on the latest commit to the main branch.
+This repository deploys **Portainer CE** — a web UI for managing the Docker host it runs on — behind **Traefik** with automatic **Let's Encrypt TLS**, including a routed endpoint for remote Edge agents.
 
-**Passing**: This means the most recent commit has successfully passed all deployment checks, confirming that the Docker Compose setup functions correctly as designed.
+📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-portainer-using-docker-compose/](https://www.heyvaldemar.com/install-portainer-using-docker-compose/).
 
-📙 The complete installation guide is available on my [website](https://www.heyvaldemar.com/install-portainer-using-docker-compose/).
+## Getting started
 
-❗ Change variables in the `.env` to meet your requirements.
+```bash
+# 1. Clone
+git clone https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose
+cd portainer-traefik-letsencrypt-docker-compose
 
-💡 Note that the `.env` file should be in the same directory as `portainer-traefik-letsencrypt-docker-compose.yml`.
+# 2. Create the two Docker networks the stack expects
+docker network create traefik-network
+docker network create portainer-network
 
-Create networks for your services before deploying the configuration using the commands:
+# 3. Copy the environment template and fill in required values
+cp .env.example .env
+$EDITOR .env
 
-`docker network create traefik-network`
+# 4. Deploy
+docker compose -f portainer-traefik-letsencrypt-docker-compose.yml -p portainer up -d
+```
 
-`docker network create portainer-network`
+**Open the UI immediately after deploy.** Portainer's first-run screen creates the admin account, and the installation locks itself after 5 minutes for security — if you miss the window, `docker restart portainer-portainer-1` re-opens it.
 
-Deploy Portainer using Docker Compose:
+### What success looks like
 
-`docker compose -f portainer-traefik-letsencrypt-docker-compose.yml -p portainer up -d`
+```bash
+docker compose -f portainer-traefik-letsencrypt-docker-compose.yml -p portainer ps
+curl -fsk "https://${PORTAINER_FRONTEND_HOSTNAME}/api/system/status"   # {"Version":"2.45.0",...}
+```
 
-## Author
+### Common first-deploy issues
 
-hey everyone,
+- **Cert issuance fails.** DNS hasn't propagated or port 80 isn't reachable from the internet.
+- **\"New Portainer installation\" timeout page.** More than 5 minutes passed before the first visit — restart the Portainer container and create the admin right away.
+- **Networks not found.** Step 2 was skipped.
 
-💾 I’ve been in the IT game for over 20 years, cutting my teeth with some big names like [IBM](https://www.linkedin.com/in/heyvaldemar/), [Thales](https://www.linkedin.com/in/heyvaldemar/), and [Amazon](https://www.linkedin.com/in/heyvaldemar/). These days, I wear the hat of a DevOps Consultant and Team Lead, but what really gets me going is Docker and container technology - I’m kind of obsessed!
+## Supply chain trust
 
-💛 I have my own IT [blog](https://www.heyvaldemar.com/), where I’ve built a [community](https://discord.gg/AJQGCCBcqf) of DevOps enthusiasts who share my love for all things Docker, containers, and IT technologies in general. And to make sure everyone can jump on this awesome DevOps train, I write super detailed guides (seriously, they’re foolproof!) that help even newbies deploy and manage complex IT solutions.
+Two images — [`traefik`](https://hub.docker.com/_/traefik) and [`portainer/portainer-ce`](https://hub.docker.com/r/portainer/portainer-ce) — pinned to `tag@sha256:<digest>` as interpolation defaults in the compose `x-images` block. `git pull` alone delivers the tested combination; an `*_IMAGE_TAG` variable in `.env` overrides deliberately.
 
-🚀 My dream is to empower every single person in the DevOps community to squeeze every last drop of potential out of Docker and container tech.
+The weekly `check-pin-freshness` CI job re-resolves each pin against its registry and compares the pinned versions against the latest upstream releases. GitHub Actions are pinned by commit SHA; Dependabot keeps those fresh.
 
-🐳 As a [Docker Captain](https://www.docker.com/captains/vladimir-mikhalev/), I’m stoked to share my knowledge, experiences, and a good dose of passion for the tech. My aim is to encourage learning, innovation, and growth, and to inspire the next generation of IT whizz-kids to push Docker and container tech to its limits.
+## Production checklist
 
-Let’s do this together!
+- [ ] **Create the admin account within 5 minutes of first start** — the installer locks itself after that.
+- [ ] **Strong admin password** — Portainer has full control of the Docker socket, which is root on the host.
+- [ ] **Regenerate the Traefik dashboard hash** — never ship the placeholder.
+- [ ] **Treat this as an admin surface**: consider IP-allowlisting the hostname at your firewall; every Portainer session can start privileged containers.
+- [ ] **Verify Let's Encrypt cert issuance** in the Traefik logs on first start.
 
-## My 2D Portfolio
+## Testing
 
-🕹️ Click into [sre.gg](https://www.sre.gg/) — my virtual space is a 2D pixel-art portfolio inviting you to interact with elements that encapsulate the milestones of my DevOps career.
+The [Deployment Verification](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml?query=branch%3Amain) workflow runs on every push, pull request, and every Monday at 06:00 UTC: actionlint, Trivy scans of both pinned images, the weekly freshness check, and a deploy-and-test job that boots the stack and requires the Portainer API to answer with its version JSON through Traefik.
 
-## My Courses
+## Security Notes
 
-🎓 Dive into my [comprehensive IT courses](https://www.heyvaldemar.com/courses/) designed for enthusiasts and professionals alike. Whether you're looking to master Docker, conquer Kubernetes, or advance your DevOps skills, my courses provide a structured pathway to enhancing your technical prowess.
+- Portainer mounts `/var/run/docker.sock` read-write by design — that is the product. Anyone with a Portainer admin session effectively has root on this host, so protect the login accordingly.
+- `no-new-privileges:true` is set on the Portainer container.
+- The Edge endpoint (port 8000) is routed but inert until you deploy Edge agents pointing at it.
 
-🔑 [Each course](https://www.udemy.com/user/heyvaldemar/) is built from the ground up with real-world scenarios in mind, ensuring that you gain practical knowledge and hands-on experience. From beginners to seasoned professionals, there's something here for everyone to elevate their IT skills.
+---
 
-## My Services
-
-💼 Take a look at my [service catalog](https://www.heyvaldemar.com/services/) and find out how we can make your technological life better. Whether it's increasing the efficiency of your IT infrastructure, advancing your career, or expanding your technological horizons — I'm here to help you achieve your goals. From DevOps transformations to building gaming computers — let's make your technology unparalleled!
-
-## Patreon Exclusives
-
-🏆 Join my [Patreon](https://www.patreon.com/heyvaldemar) and dive deep into the world of Docker and DevOps with exclusive content tailored for IT enthusiasts and professionals. As your experienced guide, I offer a range of membership tiers designed to suit everyone from newbies to IT experts.
-
-## My Recommendations
-
-📕 Check out my collection of [essential DevOps books](https://kit.co/heyvaldemar/essential-devops-books)\
-🖥️ Check out my [studio streaming and recording kit](https://kit.co/heyvaldemar/my-studio-streaming-and-recording-kit)\
-📡 Check out my [streaming starter kit](https://kit.co/heyvaldemar/streaming-starter-kit)
-
-## Follow Me
-
-🎬 [YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1)\
-🐦 [X / Twitter](https://twitter.com/heyvaldemar)\
-🎨 [Instagram](https://www.instagram.com/heyvaldemar/)\
-🐘 [Mastodon](https://mastodon.social/@heyvaldemar)\
-🧵 [Threads](https://www.threads.net/@heyvaldemar)\
-🎸 [Facebook](https://www.facebook.com/heyvaldemarFB/)\
-🧊 [Bluesky](https://bsky.app/profile/heyvaldemar.bsky.social)\
-🎥 [TikTok](https://www.tiktok.com/@heyvaldemar)\
-💻 [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)\
-📣 [daily.dev Squad](https://app.daily.dev/squads/devopscompass)\
-🧩 [LeetCode](https://leetcode.com/u/heyvaldemar/)\
-🐈 [GitHub](https://github.com/heyvaldemar)
-
-## Community of IT Experts
-
-👾 [Discord](https://discord.gg/AJQGCCBcqf)
-
-## Refill My Coffee Supplies
-
-💖 [PayPal](https://www.paypal.com/paypalme/heyvaldemarCOM)\
-🏆 [Patreon](https://www.patreon.com/heyvaldemar)\
-💎 [GitHub](https://github.com/sponsors/heyvaldemar)\
-🥤 [BuyMeaCoffee](https://www.buymeacoffee.com/heyvaldemar)\
-🍪 [Ko-fi](https://ko-fi.com/heyvaldemar)
-
-🌟 **Bitcoin (BTC):** bc1q2fq0k2lvdythdrj4ep20metjwnjuf7wccpckxc\
-🔹 **Ethereum (ETH):** 0x76C936F9366Fad39769CA5285b0Af1d975adacB8\
-🪙 **Binance Coin (BNB):** bnb1xnn6gg63lr2dgufngfr0lkq39kz8qltjt2v2g6\
-💠 **Litecoin (LTC):** LMGrhx8Jsx73h1pWY9FE8GB46nBytjvz8g
+## About the maintainer
 
 <div align="center">
 
-### Show some 💜 by starring some of the [repositories](https://github.com/heyValdemar?tab=repositories)!
+**Maintained by [Vladimir Mikhalev](https://github.com/heyvaldemar)** — Docker Captain · IBM Champion · AWS Community Builder
 
-![octocat](https://user-images.githubusercontent.com/10498744/210113490-e2fad07f-4488-4da8-a656-b9abbdd8cb26.gif)
+[YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1) · [Blog](https://heyvaldemar.com) · [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)
 
 </div>
-
-![footer](https://user-images.githubusercontent.com/10498744/210157572-1fca0242-8af2-46a6-bfa3-666ffd40ebde.svg)
