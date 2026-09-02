@@ -22,6 +22,16 @@ volumes:
 services:
   portainer:
     image: *portainer-image
+    # Resource limits as .env-overridable defaults (e.g. PORTAINER_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${PORTAINER_MEMORY_LIMIT:-512m}
+          cpus: "${PORTAINER_CPU_LIMIT:-1.0}"
+        reservations:
+          memory: ${PORTAINER_MEMORY_RESERVATION:-64m}
+          cpus: "${PORTAINER_CPU_RESERVATION:-0.25}"
     command: -H unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -77,6 +87,16 @@ services:
 
   traefik:
     image: *traefik-image
+    # Resource limits as .env-overridable defaults (e.g. TRAEFIK_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${TRAEFIK_MEMORY_LIMIT:-256m}
+          cpus: "${TRAEFIK_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${TRAEFIK_MEMORY_RESERVATION:-64m}
+          cpus: "${TRAEFIK_CPU_RESERVATION:-0.1}"
     command:
       # Set the log level (DEBUG, INFO, WARN, ERROR)
       - "--log.level=${TRAEFIK_LOG_LEVEL:-WARN}"
