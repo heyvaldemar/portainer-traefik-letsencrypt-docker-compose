@@ -26,7 +26,7 @@ _(no unreleased changes yet)_
 
 ### Added
 
-- **`tests/e2e-backup-restore.sh`** — scenarios against the live stack,
+- **`tests/e2e-backup-restore.sh`**: scenarios against the live stack,
   run by CI on every push: the required-variable guard fires, a backup
   set is produced, the archive is readable, a cycle that cannot
   write its archive is reported as `FAILED`, **restore genuinely
@@ -37,7 +37,7 @@ _(no unreleased changes yet)_
 ### Added
 
 - **A `backups` service** for Portainer's BoltDB database and settings (a copy taken while Portainer runs is consistent enough for BoltDB's single-writer model; for a guaranteed-consistent snapshot use Settings -> Backup in the UI or stop Portainer briefly): on a loop it takes a `tar.gz` of the rest of the data directory (live database files excluded), logs `OK` or `FAILED` per artefact (a failed archive is kept as `.failed`), and prunes only its own files. Schedule knobs (`PORTAINER_BACKUP_INIT_SLEEP`, `PORTAINER_BACKUP_INTERVAL`, `PORTAINER_BACKUP_PRUNE_DAYS`, path and names) have defaults listed in `.env.example`.
-- **`portainer-restore-data.sh`** — interactive restore of a backup set: stops portainer, unpacks the data archive, restores each database copy, starts portainer.
+- **`portainer-restore-data.sh`**: interactive restore of a backup set: stops portainer, unpacks the data archive, restores each database copy, starts portainer.
 - CI waits for the first backup cycle and proves the archives are readable.
 
 ## [1.2.0] - 2026-09-02
@@ -57,7 +57,7 @@ _(no unreleased changes yet)_
 
 ### Added
 
-- **`update.sh`** — unattended updates to the newest tagged release,
+- **`update.sh`**: unattended updates to the newest tagged release,
   and nothing else: a tag is cut only after CI has booted the pinned
   images and passed the smoke tests, so "update to the latest tag" means
   "update to a combination a machine has already run". It refuses to
@@ -74,7 +74,7 @@ v1.2.0.
 ### Changed
 
 - **Portainer CE and Traefik pinned by `tag@sha256:digest`** in the compose
-  `x-images` block (Portainer CE 2.45.0, Traefik 3.7 — 3.2's Docker client
+  `x-images` block (Portainer CE 2.45.0, Traefik 3.7, 3.2's Docker client
   cannot talk to Docker Engine 29). `git pull` delivers the tested
   combination; `.env` carries only hostnames and the dashboard credentials.
 - Required variables now fail fast with `:?` guards instead of producing a
