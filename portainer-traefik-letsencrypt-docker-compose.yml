@@ -194,7 +194,9 @@ services:
           DATA_FILE="$$PORTAINER_BACKUPS_PATH/$$PORTAINER_DATA_BACKUP_NAME-$$STAMP.tar.gz"
           echo "[$$(date -Iseconds)] Starting data backup to $$DATA_FILE"
           tar -C /data --exclude='./tls' -zcpf "$$DATA_FILE" .; RC=$$?
-          if [ "$$RC" -eq 0 ] || [ "$$RC" -eq 1 ]; then
+          # BusyBox tar exits 1 for everything from "file changed" to "cannot
+          # write", so the exit code proves nothing: verify the archive itself.
+          if [ "$$RC" -le 1 ] && [ -f "$$DATA_FILE" ] && gzip -t "$$DATA_FILE" 2>/dev/null; then
             echo "[$$(date -Iseconds)] Data backup OK: $$DATA_FILE ($$(stat -c %s "$$DATA_FILE") bytes)"
           else
             echo "[$$(date -Iseconds)] Data backup FAILED - partial file kept as $$DATA_FILE.failed for diagnosis" >&2

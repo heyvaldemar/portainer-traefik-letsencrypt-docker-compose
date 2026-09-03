@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _(no unreleased changes yet)_
 
+## [1.4.0] - 2026-09-02
+
+### Added
+
+- **`tests/e2e-backup-restore.sh`** — scenarios against the live stack,
+  run by CI on every push: the required-variable guard fires, a backup
+  set is produced, the archive is readable, a cycle that cannot
+  write its archive is reported as `FAILED`, **restore genuinely
+  replaces the data** (the application is stopped, the baseline archive is unpacked over the data directory, and a file created after the baseline is gone), and pruning removes only old files.
+
 ## [1.3.0] - 2026-09-02
 
 ### Added
@@ -70,7 +80,8 @@ v1.2.0.
   requires the Portainer API to answer with its version through Traefik.
 - `.env.example` with generation commands; `.env` gitignored.
 
-[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.0.0...v1.1.0

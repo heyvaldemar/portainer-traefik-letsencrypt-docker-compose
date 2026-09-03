@@ -102,6 +102,15 @@ docker compose -p portainer exec backups ls -la /srv/portainer/backups/
 
 The [Deployment Verification](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml?query=branch%3Amain) workflow runs on every push, pull request, and every day at 06:00 UTC: actionlint, Trivy scans of both pinned images, the weekly freshness check, and a deploy-and-test job that boots the stack and requires the Portainer API to answer with its version JSON through Traefik.
 
+### Backup and restore, proven
+
+`tests/e2e-backup-restore.sh` runs against the live stack and is what CI executes after the smoke test. The scenario that matters most is the restore roundtrip: the application is stopped, the baseline archive is unpacked over the data directory, and a file created after the baseline is gone. The tests stop the application briefly and write into its data directory — run them on a staging copy with short intervals in `.env` (`PORTAINER_BACKUP_INIT_SLEEP=15s`, `PORTAINER_BACKUP_INTERVAL=60s`), never on production.
+
+```bash
+chmod +x tests/e2e-backup-restore.sh
+./tests/e2e-backup-restore.sh
+```
+
 ## Security Notes
 
 - Portainer mounts `/var/run/docker.sock` read-write by design — that is the product. Anyone with a Portainer admin session effectively has root on this host, so protect the login accordingly.
