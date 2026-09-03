@@ -3,7 +3,7 @@
 [![Deployment Verification](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository deploys **Portainer CE** (a web UI for managing the Docker host it runs on) behind **Traefik** with automatic **Let's Encrypt TLS**, including a routed endpoint for remote Edge agents.
+This repository deploys Portainer CE (a web UI for managing the Docker host it runs on) behind Traefik with automatic Let's Encrypt TLS, including a routed endpoint for remote Edge agents.
 
 📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-portainer-using-docker-compose/](https://www.heyvaldemar.com/install-portainer-using-docker-compose/).
 
@@ -117,7 +117,7 @@ chmod +x tests/e2e-backup-restore.sh
 ./tests/e2e-backup-restore.sh
 ```
 
-## Security Notes
+## Security notes
 
 - Portainer mounts `/var/run/docker.sock` read-write by design. That is the product. Anyone with a Portainer admin session effectively has root on this host, so protect the login accordingly.
 - `no-new-privileges:true` is set on the Portainer container.

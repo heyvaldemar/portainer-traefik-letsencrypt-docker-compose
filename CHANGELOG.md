@@ -45,7 +45,7 @@ _(no unreleased changes yet)_
 - **`tests/e2e-backup-restore.sh`**: scenarios against the live stack,
   run by CI on every push: the required-variable guard fires, a backup
   set is produced, the archive is readable, a cycle that cannot
-  write its archive is reported as `FAILED`, **restore genuinely
+ write its archive is reported as `FAILED`, **restore 
   replaces the data** (the application is stopped, the baseline archive is unpacked over the data directory, and a file created after the baseline is gone), and pruning removes only old files.
 
 ## [1.3.0] - 2026-09-02
