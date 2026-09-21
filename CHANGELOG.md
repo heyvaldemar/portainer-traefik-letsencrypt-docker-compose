@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.6.4] - 2026-09-21
+
 ### Security
 
 - **`traefik:3.7` was rebuilt upstream**; the pin moved from `sha256:1c32e7c36820…` to `sha256:24841fe2de73…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
@@ -136,7 +140,8 @@ v1.2.0.
   requires the Portainer API to answer with its version through Traefik.
 - `.env.example` with generation commands; `.env` gitignored.
 
-[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.3...HEAD
+[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.4...HEAD
+[1.6.4]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.3...v1.6.4
 [1.6.3]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.0...v1.6.1
