@@ -98,6 +98,8 @@ docker compose -p portainer exec backups ls -la /srv/portainer/backups/
 ./portainer-restore-data.sh
 ```
 
+It lists the backup sets and asks, or takes the timestamp as its argument; it reads every path and name from the running backups container, and CI runs it on every push.
+
 **Off-host replication.** Backups live in a named volume on the same host. Bind-mount `PORTAINER_BACKUPS_PATH` to a directory covered by your off-host backup solution (restic, rclone, Borg, S3 sync).
 
 ## Container hardening

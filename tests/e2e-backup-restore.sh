@@ -154,17 +154,16 @@ test_backup_failure_detected() {
 
 test_restore_roundtrip() {
   # Drop a marker file into the data directory after the baseline archive,
-  # unpack the baseline over it with the application stopped, assert the
-  # marker is gone (tar does not delete, so the archive is unpacked into a
-  # fresh directory and swapped in).
+  # restore the baseline with the shipped script, assert the marker is gone.
   local set
   set=$(post_marker_backup) || { fail "no baseline set"; return 1; }
   echo "  baseline archive: $set"
   backups_sh "echo marker > /data/.e2e-restore-marker"
   echo "  stopping the application, restoring the archive"
-  docker stop "$APP_CONTAINER" > /dev/null
-  backups_sh "rm -rf /tmp/e2e-restore && mkdir -p /tmp/e2e-restore && tar -C /tmp/e2e-restore -xzpf $set && find /data -mindepth 1 -maxdepth 1 -exec rm -rf {} + && cp -a /tmp/e2e-restore/. /data/" || { docker start "$APP_CONTAINER" > /dev/null; fail "restore commands failed"; return 1; }
-  docker start "$APP_CONTAINER" > /dev/null
+  # THE SHIPPED SCRIPT, NOT A COPY OF ITS COMMANDS. This used to restore here,
+  # and cleared the data first where the script did not.
+  COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT_NAME" ./portainer-restore-data.sh "$(basename "$set" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}')" > /dev/null \
+    || { fail "./portainer-restore-data.sh failed"; return 1; }
   if backups_sh "test -f /data/.e2e-restore-marker"; then fail "marker still present after restore - restore was a no-op"; return 1; fi
   echo "  marker absent after restore - the archive is restorable"
 }
