@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.7.0] - 2026-09-26
+
 ### Added
 
 - **Traefik's timeouts on the HTTPS entry point can be set from `.env`.**
@@ -167,7 +171,8 @@ v1.2.0.
   requires the Portainer API to answer with its version through Traefik.
 - `.env.example` with generation commands; `.env` gitignored.
 
-[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.4...HEAD
+[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.5...v1.7.0
 [1.6.4]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.3...v1.6.4
 [1.6.3]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.6.1...v1.6.2
