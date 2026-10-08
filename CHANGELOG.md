@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Changed
+
+- **`portainer/portainer-ce:2.45.1` moved to `portainer/portainer-ce:2.45.2`.** The freshness check reported the lag; the deploy job booted the stack on the new image before this landed.
 
 ## [1.7.1] - 2026-10-07
 
