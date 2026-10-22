@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.7.7] - 2026-10-22
+
 ### Changed
 
 - **`portainer/portainer-ce:2.45.2` moved to `portainer/portainer-ce:2.45.3`.** The freshness check reported the lag; the deploy job booted the stack on the new image before this landed.
@@ -224,7 +228,8 @@ v1.2.0.
   requires the Portainer API to answer with its version through Traefik.
 - `.env.example` with generation commands; `.env` gitignored.
 
-[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.7.6...HEAD
+[Unreleased]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.7.7...HEAD
+[1.7.7]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.7.6...v1.7.7
 [1.7.6]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.7.5...v1.7.6
 [1.7.5]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.7.4...v1.7.5
 [1.7.4]: https://github.com/heyvaldemar/portainer-traefik-letsencrypt-docker-compose/compare/v1.7.3...v1.7.4
